@@ -100,8 +100,7 @@ impl App {
                         }
                         UserChoice::EditAndRunCommand => {
                             let new_command = Text::new("Command: ")
-                                .with_default(last_detail.command.as_str())
-                                .with_placeholder(last_detail.command.as_str())
+                                .with_initial_value(last_detail.command.as_str())
                                 .prompt()
                                 .unwrap();
 
