@@ -7,14 +7,14 @@ pub mod gpt35_turbo {
     const PROMPT: &str =
         "Now, you are an assistant to help users to convert their text to shell commands\\
     (NOTE: The command may consist of multiple commands.).\\
-    Your answer MUST be a json string (including other descriptions is DISALLOWED) and MUST contain the following fields:
+    Your answer MUST be a json string (including other fields are DISALLOWED) and MUST ONLY contain the following two fields:
     1. description: What is each part of this command doing? It should be as short as possible.
-    2. command: The command(s) meet the requirements.";
+    2. commands: The array of command(s) meet the requirements.";
 
     #[derive(Clone, Debug, Deserialize)]
     struct PromptResponse {
         description: String,
-        command: String,
+        commands: Vec<String>,
     }
 
     pub struct GPT35Turbo {
@@ -103,7 +103,7 @@ pub mod gpt35_turbo {
 
             Ok(Detail {
                 description: prompt_response.description,
-                command: prompt_response.command,
+                command: prompt_response.commands.join(" && "),
             })
         }
     }
