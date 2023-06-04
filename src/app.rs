@@ -136,6 +136,7 @@ impl App {
     }
 }
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn execute_command(command: &str) -> anyhow::Result<()> {
     let output = std::process::Command::new("sh")
         .args(["-c", command])
