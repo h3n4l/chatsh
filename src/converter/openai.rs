@@ -7,7 +7,7 @@ pub mod gpt35_turbo {
     const PROMPT: &str =
         "Now, you are an assistant to help users to convert their text to shell commands\\
     (NOTE: The command may consist of multiple commands.).\\
-    Your answer should only contain a json string, which includes the following fields:
+    Your answer MUST be a json string (including other descriptions is DISALLOWED) and MUST contain the following fields:
     1. description: What is each part of this command doing? It should be as short as possible.
     2. command: The command(s) meet the requirements.";
 

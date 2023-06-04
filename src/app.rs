@@ -2,12 +2,12 @@ use std::fmt;
 
 use crate::converter::{openai, Converter, Detail};
 use colored::*;
+use indicatif::{ProgressBar, ProgressStyle};
 use inquire::{Select, Text};
 
 enum Status {
     Begin(String),
     WaitingText,
-    WaitingConverterResponse,
     WaitingUserChoice,
     End,
 }
@@ -53,15 +53,27 @@ impl App {
                     self.status = Status::WaitingText;
                 }
                 Status::WaitingText => {
-                    let question = Text::new("Text: ").prompt().unwrap();
+                    let question = Text::new("Text: ")
+                        .with_help_message("Input 'exit' or 'quit' to end the program.")
+                        .prompt()
+                        .unwrap();
 
                     if question == "exit" || question == "quit" {
                         self.status = Status::End;
                         continue;
                     }
 
-                    self.status = Status::WaitingConverterResponse;
+                    let spinner_style =
+                        ProgressStyle::with_template("{prefix:.bold.dim} {spinner} {wide_msg}")
+                            .unwrap()
+                            .tick_chars("⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈✔");
+                    let progress_bar = ProgressBar::new_spinner();
+                    progress_bar.set_style(spinner_style);
+                    progress_bar.enable_steady_tick(std::time::Duration::from_millis(25));
+                    progress_bar.set_prefix("Converting");
+
                     let detail = self.converter.convert(&question);
+                    progress_bar.finish_and_clear();
                     if let Err(e) = detail {
                         println!("Error: {}", e.to_string().red());
                         continue;
@@ -129,7 +141,6 @@ impl App {
                 Status::End => {
                     return;
                 }
-                _ => {}
             }
         }
     }
