@@ -2,7 +2,7 @@ pub mod openai;
 
 #[derive(Clone, Debug)]
 pub struct Detail {
-    pub description: String,
+    pub descriptions: Vec<String>,
     pub command: String,
 }
 

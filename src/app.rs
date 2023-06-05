@@ -79,6 +79,10 @@ impl App {
                         continue;
                     }
                     let detail = detail.unwrap();
+                    println!("{}:", "Description".bold());
+                    for (index, desc) in detail.descriptions.iter().enumerate() {
+                        println!("{}. {}", (index + 1).to_string().bold(), desc);
+                    }
                     println!("{}: {}", "Command".bold(), detail.command.bold());
                     self.last_detail = Some(detail);
                     self.status = Status::WaitingUserChoice;

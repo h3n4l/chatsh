@@ -8,12 +8,14 @@ pub mod gpt35_turbo {
         "Now, you are an assistant to help users to convert their text to shell commands\\
     (NOTE: The command may consist of multiple commands.).\\
     Your answer MUST be a json string (including other fields are DISALLOWED) and MUST ONLY contain the following two fields:
-    1. description: What is each part of this command doing? It should be as short as possible.
+    1. descriptions: The array of string, each element interpreting a part of the command you generated. \\
+    (For example, if you give the command [\"cd a\", \"ls -lh\"], the descriptions could be [\"`cd a`: navigate to a directory \", \"`ls -lh`: display the information about each item and its size\"]. \\
+    NOTE: The description ALWAYS starts with the command you generated, and the command is wrapped by backticks.)
     2. commands: The array of command(s) meet the requirements.";
 
     #[derive(Clone, Debug, Deserialize)]
     struct PromptResponse {
-        description: String,
+        descriptions: Vec<String>,
         commands: Vec<String>,
     }
 
@@ -102,7 +104,7 @@ pub mod gpt35_turbo {
                 })?;
 
             Ok(Detail {
-                description: prompt_response.description,
+                descriptions: prompt_response.descriptions,
                 command: prompt_response.commands.join(" && "),
             })
         }
