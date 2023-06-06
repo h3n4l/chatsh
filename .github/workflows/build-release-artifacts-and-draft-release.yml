@@ -5,6 +5,9 @@ on:
     tags:
       - "*.*.*"
 
+permissions:
+  contents: read
+
 jobs:
   build-linux-binary:
     runs-on: ubuntu-20.04
@@ -39,6 +42,7 @@ jobs:
         id: create-draft-release
         with:
           config-name: workflows-config/release-drafter.yml
+          disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Make Directories
