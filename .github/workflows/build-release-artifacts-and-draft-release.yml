@@ -35,6 +35,7 @@ jobs:
     needs: [build-linux-binary, build-darwin-binary]
     permissions:
       contents: write
+      pull-requests: read
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v5
