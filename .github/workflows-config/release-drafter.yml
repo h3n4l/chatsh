@@ -1,5 +1,6 @@
 # Should trim prefix `refs/tags/` from tag name
-name-template: ${{ github.ref }}
+name-template: "${{ github.ref }} 🌈"
+tag-template: "${{ github.ref }}"
 template: |
   ## Changes
   $CHANGES
