@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build chatsh
-        run: cargo build --release --locked --verbose
+        run: cargo build --release --verbose
       - name: Upload to Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build chatsh
-        run: cargo build --release --locked --verbose
+        run: cargo build --release --verbose
       - name: Upload to Artifact
         uses: actions/upload-artifact@v3
         with:
