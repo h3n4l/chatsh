@@ -38,7 +38,7 @@ jobs:
         name: Draft Release
         id: create-draft-release
         with:
-          config-name: .github/workflows-config/release-drafter.yml
+          config-name: workflows-config/release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Make Directories
