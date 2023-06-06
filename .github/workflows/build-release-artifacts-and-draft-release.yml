@@ -61,9 +61,9 @@ jobs:
           name: chatsh-darwin
           path: target/release/darwin/chatsh
       - name: Archive Linux Artifact
-        run: tar -czvf target/release/chatsh-linux_x86_64.tar.gz target/release/linux/chatsh
+        run: tar -czvf target/release/chatsh-linux_x86_64.tar.gz -C target/release/linux chatsh
       - name: Archive Darwin Artifact
-        run: tar -czvf target/release/chatsh-darwin_x86_64.tar.gz target/release/darwin/chatsh
+        run: tar -czvf target/release/chatsh-darwin_x86_64.tar.gz -C target/release/darwin chatsh
       - name: Calculate Checksums
         run: |
           cd target/release
