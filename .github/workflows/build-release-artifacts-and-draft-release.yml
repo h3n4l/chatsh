@@ -55,12 +55,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: chatsh-linux
-          path: target/release/linux/chatsh
+          path: target/release/linux
       - name: Download Darwin Artifact
         uses: actions/download-artifact@v2
         with:
           name: chatsh-darwin
-          path: target/release/darwin/chatsh
+          path: target/release/darwin
       - name: Archive Linux Artifact
         run: tar -czvf target/release/chatsh-linux_x86_64.tar.gz -C target/release/linux chatsh
       - name: Archive Darwin Artifact
