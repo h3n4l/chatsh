@@ -1,10 +1,23 @@
 use chatsh::app;
 use chrono::Local;
+use clap::Parser;
 use std::env;
 use std::io::Write;
+#[derive(Parser, Debug)]
+struct Args {
+    // Whether to print debug log.
+    #[clap(short, long, default_value = "false")]
+    debug: bool,
+}
 
 fn main() {
-    init_logger();
+    let args = Args::parse();
+    init_logger(if args.debug {
+        log::LevelFilter::Debug
+    } else {
+        log::LevelFilter::Info
+    });
+
     let openai_key = env::var("OPENAI_KEY");
     if openai_key.is_err() {
         log::error!(
@@ -19,7 +32,7 @@ fn main() {
     app.run();
 }
 
-fn init_logger() {
+fn init_logger(filter_level: log::LevelFilter) {
     env_logger::Builder::new()
         .format(|buf, record| {
             let mut level_style = buf.style();
@@ -48,6 +61,6 @@ fn init_logger() {
                 record.args()
             )
         })
-        .filter_level(log::LevelFilter::Info)
+        .filter_level(filter_level)
         .init();
 }
