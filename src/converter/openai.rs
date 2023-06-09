@@ -97,7 +97,7 @@ pub mod gpt35_turbo {
             let prompt_response: PromptResponse = serde_json::from_str(&choice.message.content)
                 .map_err(|e| {
                     anyhow::anyhow!(
-                        "Failed to deserialize prompt response from gpt-3.5-turbo response: {}, err: {}",
+                        "Failed to deserialize prompt response from gpt-3.5-turbo, response: {}, err: {}",
                         choice.message.content,
                         e,
                     )

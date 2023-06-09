@@ -45,50 +45,69 @@ impl App {
         }
     }
 
+    // begin_converting_progress_bar beginning displaying the progress bar on the screen, and
+    // return a function to stop the progress bar.
+    fn begin_converting_progress_bar() -> impl FnOnce() {
+        let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim} {spinner} {wide_msg}")
+            .unwrap()
+            .tick_chars("⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈✔");
+        let progress_bar = ProgressBar::new_spinner();
+        progress_bar.set_style(spinner_style);
+        progress_bar.set_prefix("Converting");
+        progress_bar.enable_steady_tick(std::time::Duration::from_millis(25));
+        move || {
+            progress_bar.finish_and_clear();
+        }
+    }
+
     pub fn run(&mut self) {
         loop {
             match &self.status {
-                Status::Begin(hello) => {
-                    println!("{}", hello);
+                Status::Begin(hello_msg) => {
+                    println!("{}", hello_msg);
                     self.status = Status::WaitingText;
                 }
                 Status::WaitingText => {
                     let question = Text::new("Text: ")
-                        .with_help_message("Input 'exit' or 'quit' to end the program.")
+                        .with_help_message("Input 'quit' to quit the program.")
                         .prompt()
                         .unwrap();
 
-                    if question == "exit" || question == "quit" {
+                    if question == "quit" {
                         self.status = Status::End;
                         continue;
                     }
 
-                    let spinner_style =
-                        ProgressStyle::with_template("{prefix:.bold.dim} {spinner} {wide_msg}")
-                            .unwrap()
-                            .tick_chars("⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈✔");
-                    let progress_bar = ProgressBar::new_spinner();
-                    progress_bar.set_style(spinner_style);
-                    progress_bar.enable_steady_tick(std::time::Duration::from_millis(25));
-                    progress_bar.set_prefix("Converting");
+                    let progress_bar_stopper = Self::begin_converting_progress_bar();
 
                     let detail = self.converter.convert(&question);
-                    progress_bar.finish_and_clear();
-                    if let Err(e) = detail {
-                        println!("Error: {}", e.to_string().red());
+                    progress_bar_stopper();
+
+                    if detail.is_err() {
+                        log::error!(
+                            "Cannot convert the text to command detail, error: {}",
+                            detail.err().unwrap()
+                        );
+                        self.status = Status::WaitingText;
                         continue;
                     }
+
                     let detail = detail.unwrap();
+
                     println!("{}:", "Description".bold());
                     for (index, desc) in detail.descriptions.iter().enumerate() {
                         println!("{}. {}", (index + 1).to_string().bold(), desc);
                     }
                     println!("{}: {}", "Command".bold(), detail.command.bold());
+
                     self.last_detail = Some(detail);
                     self.status = Status::WaitingUserChoice;
                 }
                 Status::WaitingUserChoice => {
-                    let last_detail = self.last_detail.as_ref().unwrap();
+                    let last_detail = self
+                        .last_detail
+                        .as_ref()
+                        .expect("Expecting get the last detail in WaitingUserChoice status.");
 
                     let options = vec![
                         UserChoice::ExecuteCommand,
@@ -99,6 +118,7 @@ impl App {
                     let ans = Select::new("What do you want to do next?", options)
                         .prompt()
                         .unwrap();
+
                     match ans {
                         UserChoice::ExecuteCommand => {
                             let result = execute_command(last_detail.command.as_str());
