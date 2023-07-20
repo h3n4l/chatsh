@@ -39,7 +39,7 @@ pub struct App {
 impl App {
     pub fn new(key: &str) -> App {
         App {
-            converter: Box::new(openai::gpt35_turbo::GPT35Turbo::new(key)),
+            converter: Box::new(openai::gpt4_32k::GPT4_32K::new(key)),
             status: Status::Begin("Convert your text to shell commands".bold().to_string()),
             last_detail: None,
         }
