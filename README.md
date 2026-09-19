@@ -32,4 +32,4 @@ export OPENAI_KEY=YOUR_OPENAI_KEY
 chatsh
 ```
 
-
+Input `quit` to quit the program.
